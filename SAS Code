@@ -1,0 +1,67 @@
+DATA iris;
+  INFILE/home/u63118515/sasuser.v94/myfolder/iris.txt';
+  INPUT Y1 Y2 Y3 Y4 PLANT;
+RUN;
+
+PROC GIM;
+  CLASS PLANT;
+  MODEL Y1 ¥2 Y3 ¥4=PLANT;
+  MANOVA H=PLANT/PRINTE PRINTH;
+RUN;
+
+DATA iris;
+  INFILE /home/u63118515/sasuser.v94/myfolder/iris.txt';
+  INPUT Y1 Y2 Y3 Y4 PLANT;
+RUN;
+
+PROC GLM;
+  CLASS PLANT;
+  MODEL Y1 Y2 Y3 Y4 = PLANT;
+  CONTRAST 'Iris Setosa & Iris Versicolour vs. Iris Virginica'
+  PLANT 1 1 -2;
+  CONTRAST 'Iris Setosa vs. Iris Versicolour'
+  PLANT 1 -1 0;
+  MANOVA H=PLANT/PRINTE PRINTH;
+RUN;
+
+DATA IRIS;
+  INFILE Iris DLM=',' DSD;
+  INPUT Y1 Y2 Y3 Y4 Class $;
+PROC DISCRIM data=IRIS
+  method=NORMAL pool=yes list crossvalidate;
+  class Class;
+  var Y1 Y2 Y3 Y4;
+  LABEL Y1='sepal length' Y2='sepal width' Y3='petal length' Y4='petal width' Class='Class';
+  priors proportional;
+RUN;
+
+PROC DISCRIM data=IRIS
+  method=NORMAL pool=no list crossvalidate;
+  class Class;
+  var Y1 Y2 Y3 Y4;
+  LABEL Y1='sepal length' Y2='sepal width' Y3='petal length' Y4='petal width' Class='Class';
+  priors proportional;
+RUN;
+
+PROC DISCRIM data=IRIS
+  method=par k=6 pool=yes list crossvalidate;
+  class Class;
+  var Y1 Y2 Y3 Y4;
+  LABEL Y1='sepal length' Y2='sepal width' Y3='petal length' Y4='petal width' Class='Class';
+  priors proportional;
+RUN;
+
+DATA IRIS;
+  INFILE Iris DLM=',' DSD;
+  INPUT Y1 Y2 Y3 Y4 Class $;
+PROC PRINCOMP COV;
+  TITLE 'PCA Covariance Matrix';
+  VAR Y1-Y4;
+  LABEL Y1='sepal length' Y2='sepal width' Y3='petal length' Y4='petal width' Class='Class';
+PROC PRINCOMP out=result;
+  TITLE 'PCA Correlation Matrix';
+  VAR Y1-Y4;
+  LABEL Y1='sepal length' Y2= 'sepal width' Y3='petal length' Y4='petal width' Class='Class';
+RUN;
+
+
